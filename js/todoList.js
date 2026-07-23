@@ -4,22 +4,30 @@ const itemList = document.querySelector(".item-list");
 
 addBtn.addEventListener("click", function () {
   const itemText = input.value.trim();
-  if (itemText) {
-    const li = document.createElement("li");
-    li.className = "item-box";
-    li.textContent = itemText;
+  if (!itemText) return;
 
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "삭제";
-    delBtn.className = "btn del-btn";
-    delBtn.addEventListener("click", function () {
-      li.remove();
-    });
+  const li = document.createElement("li");
+  li.className = "item-box";
 
-    li.appendChild(delBtn);
-    itemList.appendChild(li);
+  const textSpan = document.createElement("span");
+  textSpan.className = "item-text";
+  textSpan.textContent = itemText;
 
-    input.value = "";
-    input.focus();
-  }
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "삭제";
+  delBtn.className = "btn del-btn";
+  delBtn.addEventListener("click", function () {
+    li.remove();
+  });
+
+  li.addEventListener("click", function () {
+    li.classList.toggle("completed");
+  });
+  
+  li.appendChild(textSpan);
+  li.appendChild(delBtn);
+  itemList.appendChild(li);
+
+  input.value = "";
+  input.focus();
 });
