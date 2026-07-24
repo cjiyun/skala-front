@@ -24,16 +24,43 @@ const cityInfo = {
 const city = document.getElementById("city");
 const weatherBox = document.getElementById("weather-box");
 
-const handleCityChange = () => {
-    const selectedCityValue = city.value;
-    const selectedCity = cityInfo[selectedCityValue];
+const handleCityChange = async () => {
+  const selectedCityValue = city.value;
+  const selectedCity = cityInfo[selectedCityValue];
+
+  const lat = selectedCity.latitude;
+  const lon = selectedCity.longitude;
+
+  weatherBox.innerHTML = `<p>실시간 날씨 로딩 중... ⏳</p>`;
+
+  try {
+    const apiUrl =
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${lat}` +
+      `&longitude=${lon}` +
+      `&current=temperature_2m,relative_humidity_2m`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("날씨 데이터를 불러오지 못했습니다.");
+    }
+
+    const data = await response.json();
+
+    const temperature = data.current.temperature_2m;
+    const humidity = data.current.relative_humidity_2m;
 
     weatherBox.innerHTML = `
-        <h4>📍 ${selectedCity.name} 정보</h4>
-        <p>위도 (Latitude): ${selectedCity.latitude}</p>
-        <p>경도 (Longitude): ${selectedCity.longitude}</p>
+      <h4>📍 ${selectedCity.name} 정보</h4>
+      <p>🌡️ 현재 기온: ${temperature}℃</p>
+      <p>💧 현재 습도: ${humidity}%</p>
     `;
-}
+  } catch (error) {
+    console.error(error);
+    weatherBox.innerHTML = `<p>날씨 정보를 불러올 수 없습니다.</p>`;
+  }
+};
 
 city.addEventListener("change", handleCityChange);
 
